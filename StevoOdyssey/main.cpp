@@ -13,7 +13,7 @@ int main(int argc, char* argv[]) {
 
 
 	game = new Game();
-	game->init("Mon jeu", 0, 0, 800, 640, false);
+	game->init("Stevo Odyssey", 0, 0, 800, 640, false);
 	while (game->running()) {
 
 		frameStart = SDL_GetTicks();
