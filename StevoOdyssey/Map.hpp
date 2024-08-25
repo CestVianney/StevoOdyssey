@@ -9,6 +9,7 @@ public:
 	~Map();
 
 	void LoadMap(std::string path, int sizeX, int sizeY);
+	void UnloadMap();
 	void AddTile(int srcX, int srcY, int xpos, int ypos);
 
 private:

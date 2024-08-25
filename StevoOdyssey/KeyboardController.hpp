@@ -30,7 +30,6 @@ public:
             case SDLK_z:  // Haut
                 moveUp = true;
                 lastVerticalKey = SDLK_z;
-                transform->falling = true;
                 break;
             case SDLK_q:  // Gauche
                 moveLeft = true;
@@ -46,7 +45,6 @@ public:
             //    moveDown = true;
             //    lastVerticalKey = SDLK_s;
             //    break;
-            default:
                 break;
             }
         }
@@ -83,9 +81,6 @@ public:
             //        lastVerticalKey = moveUp ? SDLK_z : SDLK_UNKNOWN;
             //    }
             //    break;
-            case SDLK_ESCAPE:  // Échapper pour quitter
-                Game::isRunning = false;
-                break;
             default:
                 break;
             }
@@ -129,6 +124,15 @@ public:
         else
         {
             sprite->Play("Idle");
+        }
+        // if left shift isnt pressed, set speed to 3
+        const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL);
+        if (currentKeyStates[SDL_SCANCODE_LSHIFT] == 0)
+		{
+			transform->speed = 3;
+        }
+        else {
+            transform->speed = 5;
         }
     }
 };

@@ -18,7 +18,6 @@ public:
 
 	float gravity = 0.5f;
 	float velocityY = 0.0f;
-	bool falling = true;
 
 	TransformComponent() 
 	{
@@ -81,7 +80,6 @@ public:
 				position.x = collider.x - width * scale;
 			}
 			else if (isCollisionGauche) {
-				std::cout << "Collistion à gauche !" << std::endl;
 				position.x = collider.x + width * scale;
 			}
 		}

@@ -133,10 +133,6 @@ void Game::render()
 	{
 		t->draw();
 	}
-	for (auto& pc : preColliders)
-	{
-		pc->draw();
-	}
 	for (auto& p : players)
 	{
 		p->draw();
