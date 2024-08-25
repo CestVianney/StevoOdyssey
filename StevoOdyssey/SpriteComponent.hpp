@@ -61,10 +61,11 @@ public:
 			srcRect.x = srcRect.w * static_cast<int>((SDL_GetTicks() / speed) % frames);
 		}
 
-		srcRect.y = animIndex * transform->height;
+	    srcRect.y = animIndex * transform->height;
 
+	    // Ajustement de la position de destRect uniquement sur l'axe X
 		destRect.x = static_cast<int>(transform->position.x) - Game::camera.x;
-		destRect.y = static_cast<int>(transform->position.y) - Game::camera.y;
+		destRect.y = static_cast<int>(transform->position.y); // Pas de soustraction de Game::camera.y
 		destRect.w = transform->width * transform->scale;
 		destRect.h = transform->height * transform->scale;
 	}

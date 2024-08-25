@@ -4,6 +4,7 @@
 #include "ECS.hpp"
 #include "Components.hpp"
 
+
 class KeyboardController : public Component
 {
 public:
@@ -29,6 +30,7 @@ public:
             case SDLK_z:  // Haut
                 moveUp = true;
                 lastVerticalKey = SDLK_z;
+                transform->falling = true;
                 break;
             case SDLK_q:  // Gauche
                 moveLeft = true;
@@ -40,10 +42,10 @@ public:
                 lastHorizontalKey = SDLK_d;
                 sprite->spriteFlip = SDL_FLIP_NONE;
                 break;
-            case SDLK_s:  // Bas
-                moveDown = true;
-                lastVerticalKey = SDLK_s;
-                break;
+            //case SDLK_s:  // Bas
+            //    moveDown = true;
+            //    lastVerticalKey = SDLK_s;
+            //    break;
             default:
                 break;
             }
@@ -74,13 +76,13 @@ public:
                     lastHorizontalKey = moveLeft ? SDLK_q : SDLK_UNKNOWN;
                 }
                 break;
-            case SDLK_s:  // Bas
-                moveDown = false;
-                if (lastVerticalKey == SDLK_s)
-                {
-                    lastVerticalKey = moveUp ? SDLK_z : SDLK_UNKNOWN;
-                }
-                break;
+            //case SDLK_s:  // Bas
+            //    moveDown = false;
+            //    if (lastVerticalKey == SDLK_s)
+            //    {
+            //        lastVerticalKey = moveUp ? SDLK_z : SDLK_UNKNOWN;
+            //    }
+            //    break;
             case SDLK_ESCAPE:  // Échapper pour quitter
                 Game::isRunning = false;
                 break;
@@ -110,10 +112,10 @@ public:
         {
             transform->velocity.y = -1;
         }
-        else if (lastVerticalKey == SDLK_s && moveDown)
-        {
-            transform->velocity.y = 1;
-        }
+        //else if (lastVerticalKey == SDLK_s && moveDown)
+        //{
+        //    transform->velocity.y = 1;
+        //}
         else
         {
             transform->velocity.y = 0;

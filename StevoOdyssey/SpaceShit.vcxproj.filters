@@ -89,6 +89,9 @@
     <ClInclude Include="Animation.hpp">
       <Filter>Fichiers sources\ECS</Filter>
     </ClInclude>
+    <ClInclude Include="PrecolliderComponent.hpp">
+      <Filter>Fichiers sources\ECS</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SpaceShit.rc">

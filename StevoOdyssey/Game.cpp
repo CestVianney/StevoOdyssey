@@ -20,9 +20,9 @@ SDL_Rect Game::camera = { 0,0,800,640};
 bool Game::isRunning = false;
 
 auto& player(manager.addEntity());
-auto& wall(manager.addEntity());
 
-const char* mapfile = "resources/tiles/tiles.png";
+SDL_Texture* backgroundTexture = nullptr; 
+
 
 enum groupLabels : std::size_t
 {
@@ -57,15 +57,21 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	} 
 
 	map = new Map("resources/tiles/tiles.png", 1, 32);
-	map->LoadMap("resources/maps/test.map",76,41);
+	map->LoadMap("resources/maps/gravity.map",25,20);
+	backgroundTexture = TextureManager::LoadTexture("resources/backgrounds/Paris.png");
 
 
-	player.addComponent<TransformComponent>(mapWidth/2, mapHeight/2);
+	player.addComponent<TransformComponent>(mapWidth/2,0);
 	player.addComponent<SpriteComponent>("resources/characters/stevo.png", true);
 	player.addComponent<KeyboardController>();
 	player.addComponent<ColliderComponent>("player");
 	player.addGroup(groupPlayers);
 }
+
+auto& tiles(manager.getGroup(Game::groupMap));
+auto& players(manager.getGroup(Game::groupPlayers));
+auto& preColliders(manager.getGroup(Game::groupPreColliders));
+auto& colliders(manager.getGroup(Game::groupColliders));
 
 void Game::handleEvents() 
 {
@@ -79,36 +85,57 @@ void Game::handleEvents()
 	}
 }
 
-auto& tiles(manager.getGroup(groupMap));
-auto& players(manager.getGroup(groupPlayers));
-auto& enemies(manager.getGroup(groupEnemies));
 
 void Game::update() 
 {
-	manager.refresh();
+
+    SDL_Rect playerCol = player.getComponent<ColliderComponent>().collider;
+    Vector2D playerPos = player.getComponent<TransformComponent>().position;
+	bool isPreColliders = false;
+    manager.refresh();
+
+	for (auto& c : preColliders)
+	{
+		SDL_Rect cCol = c->getComponent<PrecolliderComponent>().collider;
+		if (Collision::AABB(cCol, playerCol))
+		{
+			player.getComponent<TransformComponent>().handlePreCollision(cCol);
+			isPreColliders = true;
+		}
+	}
+
+    for (auto& c : colliders)
+    {
+        SDL_Rect cCol = c->getComponent<ColliderComponent>().collider;
+        if (Collision::AABB(cCol, playerCol))
+        {
+            player.getComponent<TransformComponent>().handleCollision(cCol, isPreColliders);
+        }
+    }
+	player.getComponent<TransformComponent>().update(isPreColliders);
 	manager.update();
+    // Calcul de la position de la caméra uniquement sur l'axe X
+    camera.x = player.getComponent<TransformComponent>().position.x - mapWidth / 2;
 
-	camera.x = player.getComponent<TransformComponent>().position.x - mapWidth/2;
-	camera.y = player.getComponent<TransformComponent>().position.y - mapHeight/2;
-
-	if (camera.x < 0)
-		camera.x = 0;
-	if (camera.y < 0)
-		camera.y = 0;
-	if (camera.x > camera.w)
-		camera.x = camera.w;
-	if (camera.y > camera.h)
-		camera.y = camera.h;
-
+    // Limites de la caméra sur l'axe X
+    if (camera.x < 0)
+        camera.x = 0;
+    if (camera.x > mapWidth - camera.w)
+        camera.x = mapWidth - camera.w;
 }
 
 
 void Game::render() 
 {
 	SDL_RenderClear(renderer);
+	SDL_RenderCopy(renderer, backgroundTexture, nullptr, nullptr);
 	for (auto& t : tiles)
 	{
 		t->draw();
+	}
+	for (auto& pc : preColliders)
+	{
+		pc->draw();
 	}
 	for (auto& p : players)
 	{
@@ -120,6 +147,7 @@ void Game::render()
 }
 void Game::clean()
 {
+	SDL_DestroyTexture(backgroundTexture);
 	SDL_DestroyWindow(window);
 	SDL_DestroyRenderer(renderer);
 	SDL_Quit();

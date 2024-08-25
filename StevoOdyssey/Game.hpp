@@ -28,6 +28,7 @@ public:
 	{
 		groupMap,
 		groupPlayers,
+		groupPreColliders,
 		groupColliders
 	};
 

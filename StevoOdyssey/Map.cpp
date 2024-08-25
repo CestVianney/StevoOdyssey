@@ -26,6 +26,7 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
 	{
 		for (int x = 0; x < sizeX; x++)
 		{
+			
 			mapFile.get(c);
 			srcY = atoi(&c) * tileSize;
 			mapFile.get(c);
@@ -34,6 +35,30 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
 			mapFile.ignore();
 		}
 	}
+
+	mapFile.ignore();
+
+	for (int y = 0; y < sizeY; y++)
+	{
+		for (int x = 0; x < sizeX; x++)
+		{
+			mapFile.ignore();
+			mapFile.get(c);
+			if (c == '2')
+			{
+				auto& tileColl(manager.addEntity());
+				tileColl.addComponent<ColliderComponent>("terrain", x * scaledSize, y * scaledSize, scaledSize);
+				tileColl.addGroup(Game::groupColliders);
+			} else if (c == '9')
+			{
+				auto& tileColl(manager.addEntity());
+				tileColl.addComponent<PrecolliderComponent>("precollider", x * scaledSize, y * scaledSize, scaledSize);
+				tileColl.addGroup(Game::groupPreColliders);
+			}
+			mapFile.ignore();
+		}
+	}
+
     mapFile.close();
 }
 

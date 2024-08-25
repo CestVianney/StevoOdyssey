@@ -4,7 +4,7 @@
 #include "Components.hpp"
 #include "TextureManager.hpp"
 
-class ColliderComponent : public Component
+class PrecolliderComponent : public Component
 {
 public:
 	SDL_Rect collider;
@@ -15,19 +15,18 @@ public:
 
 	TransformComponent* transform;
 
-	ColliderComponent(std::string t)
+	PrecolliderComponent(std::string t)
 	{
 		tag = t;
 	}
 
-	ColliderComponent(std::string t, int xpos, int ypos, int size)
+	PrecolliderComponent(std::string t, int xpos, int ypos, int size)
 	{
 		tag = t;
 		collider.x = xpos;
 		collider.y = ypos;
 		collider.h = collider.w = size;
 	}
-
 
 	void init() override
 	{
@@ -46,7 +45,7 @@ public:
 
 	void update() override
 	{
-		if (tag != "terrain")
+		if (tag != "precollider")
 		{
 			collider.x = static_cast<int>(transform->position.x);
 			collider.y = static_cast<int>(transform->position.y);
@@ -64,5 +63,4 @@ public:
 	}
 
 private:
-
 };
