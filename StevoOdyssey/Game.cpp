@@ -20,17 +20,6 @@ SDL_Rect Game::camera = { 0,0,800,640};
 bool Game::isRunning = false;
 
 auto& player(manager.addEntity());
-auto& wall(manager.addEntity());
-
-const char* mapfile = "resources/tiles/tiles.png";
-
-enum groupLabels : std::size_t
-{
-	groupMap,
-	groupPlayers,
-	groupEnemies,
-	groupColliders
-};
 
 Game::Game()
 {}
@@ -57,10 +46,9 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	} 
 
 	map = new Map("resources/tiles/tiles.png", 1, 32);
-	map->LoadMap("resources/maps/test.map",76,41);
+	map->LoadMap("resources/maps/first.map",25,20);
 
-
-	player.addComponent<TransformComponent>(mapWidth/2, mapHeight/2);
+	player.addComponent<TransformComponent>(750, 600);
 	player.addComponent<SpriteComponent>("resources/characters/stevo.png", true);
 	player.addComponent<KeyboardController>();
 	player.addComponent<ColliderComponent>("player");
@@ -79,26 +67,39 @@ void Game::handleEvents()
 	}
 }
 
-auto& tiles(manager.getGroup(groupMap));
-auto& players(manager.getGroup(groupPlayers));
-auto& enemies(manager.getGroup(groupEnemies));
+auto& tiles(manager.getGroup(Game::groupMap));
+auto& players(manager.getGroup(Game::groupPlayers));
+auto& colliders(manager.getGroup(Game::groupColliders));
 
 void Game::update() 
 {
+
+	SDL_Rect playerCol = player.getComponent<ColliderComponent>().collider;
+	Vector2D playerPos = player.getComponent<TransformComponent>().position;
+
 	manager.refresh();
 	manager.update();
 
-	camera.x = player.getComponent<TransformComponent>().position.x - mapWidth/2;
-	camera.y = player.getComponent<TransformComponent>().position.y - mapHeight/2;
+	for (auto& c : colliders)
+	{
+		SDL_Rect cCol = c->getComponent<ColliderComponent>().collider;
+		if (Collision::AABB(cCol, playerCol))
+		{
+			player.getComponent<TransformComponent>().position = playerPos;
+		}
+	}
 
-	if (camera.x < 0)
-		camera.x = 0;
-	if (camera.y < 0)
-		camera.y = 0;
-	if (camera.x > camera.w)
-		camera.x = camera.w;
-	if (camera.y > camera.h)
-		camera.y = camera.h;
+	//camera.x = player.getComponent<TransformComponent>().position.x - mapWidth/2;
+	//camera.y = player.getComponent<TransformComponent>().position.y - mapHeight/2;
+
+	//if (camera.x < 0)
+	//	camera.x = 0;
+	//if (camera.y < 0)
+	//	camera.y = 0;
+	//if (camera.x > camera.w)
+	//	camera.x = camera.w;
+	//if (camera.y > camera.h)
+	//	camera.y = camera.h;
 
 }
 
@@ -110,6 +111,11 @@ void Game::render()
 	{
 		t->draw();
 	}
+	for (auto& c : colliders)
+	{
+		c->draw();
+	}
+
 	for (auto& p : players)
 	{
 		p->draw();
