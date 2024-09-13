@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <bitset>
 #include <array>
+#include <SDL.h>
 
 class Component;
 class Entity;
@@ -38,6 +39,7 @@ public:
 	virtual void init() {}
 	virtual void update() {}
 	virtual void draw() {}
+	virtual void handleEvent(SDL_Event& event) {}
 
 	virtual ~Component() {}
 };
@@ -56,6 +58,10 @@ public:
 	Entity(Manager& mManager) : manager(mManager) {}
 	void update() {
 		for (auto& c : components) c->update();
+	}
+
+	void handleEvent(SDL_Event& event) {
+		for (auto& c : components) c->handleEvent(event);
 	}
 
 	void draw() {
@@ -107,6 +113,10 @@ public:
 		for (auto& e : entities) e->update();
 	}
 
+	void handleEvent(SDL_Event& event) {
+		for (auto& e : entities) e->handleEvent(event);
+	}
+
 	void draw() {
 		for (auto& e : entities) e->draw();
 	}
@@ -122,6 +132,10 @@ public:
 		entities.erase(std::remove_if(std::begin(entities), std::end(entities), [](const std::unique_ptr<Entity> &mEntity) {
 			return !mEntity->isActive();
 		}), std::end(entities));
+	}
+
+	void clean() {
+		entities.clear();
 	}
 
 	void AddToGroup(Entity* mEntity, Group mGroup) {

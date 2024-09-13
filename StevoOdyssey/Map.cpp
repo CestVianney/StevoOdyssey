@@ -3,8 +3,7 @@
 #include <fstream>
 #include "ECS.hpp"
 #include "Components.hpp"
-
-extern Manager manager;
+#include "Level.hpp"
 
 Map::Map(const char* mfp, int ms, int ts) : mapFilePath(mfp), mapScale(ms), tileSize(ts)
 {
@@ -44,7 +43,7 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
 			mapFile.get(c);
 			if (c == '2')
 			{
-				auto& tileColl(manager.addEntity());
+				auto& tileColl(Game::manager.addEntity());
 				tileColl.addComponent<ColliderComponent>("terrain", x * scaledSize, y * scaledSize, scaledSize);
 				tileColl.addGroup(Game::groupColliders);
 			}
@@ -58,7 +57,7 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
 
 void Map::AddTile(int srcX, int srcY, int xpos, int ypos)
 {
-	auto& tile(manager.addEntity());
+	auto& tile(Game::manager.addEntity());
 	tile.addComponent<TileComponent>(srcX, srcY, xpos, ypos, tileSize, mapScale, mapFilePath);
 	tile.addGroup(Game::groupMap);
 }

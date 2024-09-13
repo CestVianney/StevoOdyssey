@@ -4,27 +4,35 @@
 #include "Components.hpp"
 #include "Vector2D.hpp"
 #include "Collision.hpp"
+#include "Manage.hpp"
+#include "Level.hpp"
+#include "LevelFactory.hpp"
+#include "Level2020.cpp"
+#include "Level2021.cpp"
+#include "Level2121.cpp"
 #include <iostream>
 
 Map* map;
-Manager manager;
-
+Manager Game::manager;
+Level* currentLevel = nullptr;
 SDL_Renderer* Game::renderer = nullptr;
 SDL_Event Game::event;
+int currentLevelX = 20;
+int currentLevelY = 20;
 
 int mapWidth = 800;
 int mapHeight = 640;
 
-SDL_Rect Game::camera = { 0,0,800,640};
+SDL_Rect Game::camera = { 0,0,mapWidth,mapHeight };
 
 bool Game::isRunning = false;
-
-auto& player(manager.addEntity());
 
 Game::Game()
 {}
 Game::~Game()
-{}
+{
+	delete currentLevel;
+}
 
 void Game::init(const char* title, int xpos, int ypos, int width, int height, bool fullscreen)
 {
@@ -45,87 +53,88 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 		isRunning = true;
 	} 
 
-	map = new Map("resources/tiles/tiles.png", 1, 32);
-	map->LoadMap("resources/maps/first.map",25,20);
+	initLevels();
 
-	player.addComponent<TransformComponent>(750, 600);
-	player.addComponent<SpriteComponent>("resources/characters/stevo.png", true);
-	player.addComponent<KeyboardController>();
-	player.addComponent<ColliderComponent>("player");
-	player.addGroup(groupPlayers);
+	player = &manager.addEntity();
+	player->addComponent<TransformComponent>(500, 550, 32, 32, 1);
+	player->addComponent<SpriteComponent>("resources/characters/stevo.png", true);
+	player->addComponent<KeyboardController>();
+	player->addComponent<ColliderComponent>("player");
+	player->addGroup(Game::groupPlayers);
+
+	loadLevel(20, 20);
 }
 
-void Game::handleEvents() 
+void Game::loadLevel(int x, int y)
 {
-	SDL_PollEvent(&event);
-	switch (event.type) {
-	case SDL_QUIT:
-		isRunning = false;
-		break;
-	default:
-		break;
+	std::string levelNumber = std::to_string(x) + std::to_string(y);
+	if (currentLevel)
+	{
+		currentLevel->clean();
+		delete currentLevel;
+		currentLevel = nullptr;
+	}
+
+	currentLevel = LevelFactory::getInstance().createLevel(levelNumber);
+	std::cout << "Loading level " << levelNumber << std::endl;
+	currentLevel->init(manager, player);
+}
+
+void Game::handleEvents()
+{
+	SDL_Event event;
+	while (SDL_PollEvent(&event)) {
+		switch (event.type) {
+		case SDL_QUIT:
+			Game::isRunning = false;
+			break;
+		default:
+			manager.handleEvent(event);  
+			break;
+		}
 	}
 }
 
-auto& tiles(manager.getGroup(Game::groupMap));
-auto& players(manager.getGroup(Game::groupPlayers));
-auto& colliders(manager.getGroup(Game::groupColliders));
 
 void Game::update() 
 {
-
-	SDL_Rect playerCol = player.getComponent<ColliderComponent>().collider;
-	Vector2D playerPos = player.getComponent<TransformComponent>().position;
-
-	manager.refresh();
-	manager.update();
-
-	for (auto& c : colliders)
-	{
-		SDL_Rect cCol = c->getComponent<ColliderComponent>().collider;
-		if (Collision::AABB(cCol, playerCol))
-		{
-			player.getComponent<TransformComponent>().position = playerPos;
-		}
+	if (currentLevel != nullptr) {
+		manager.refresh();
+		currentLevel->update(manager, player);
+		manager.update();
 	}
-
-	//camera.x = player.getComponent<TransformComponent>().position.x - mapWidth/2;
-	//camera.y = player.getComponent<TransformComponent>().position.y - mapHeight/2;
-
-	//if (camera.x < 0)
-	//	camera.x = 0;
-	//if (camera.y < 0)
-	//	camera.y = 0;
-	//if (camera.x > camera.w)
-	//	camera.x = camera.w;
-	//if (camera.y > camera.h)
-	//	camera.y = camera.h;
-
+	else {
+		std::cerr << "currentLevel is null" << std::endl;
+	}
+	if (player->getComponent<TransformComponent>().position.x >= mapWidth) {
+		currentLevelX += 1;
+		loadLevel(currentLevelX, currentLevelY);
+	}
+	else if (player->getComponent<TransformComponent>().position.x <= 0) {
+		currentLevelX -= 1;
+		loadLevel(currentLevelX, currentLevelY);
+	}
+	else if (player->getComponent<TransformComponent>().position.y <= 0) {
+		currentLevelY -= 1;
+		loadLevel(currentLevelX, currentLevelY);
+	}
+	else if (player->getComponent<TransformComponent>().position.y >= mapHeight) {
+		currentLevelY += 1;
+		loadLevel(currentLevelX, currentLevelY);
+	}
 }
 
 
 void Game::render() 
 {
+
 	SDL_RenderClear(renderer);
-	for (auto& t : tiles)
-	{
-		t->draw();
-	}
-	for (auto& c : colliders)
-	{
-		c->draw();
-	}
-
-	for (auto& p : players)
-	{
-		p->draw();
-	}
-
+	currentLevel->render(manager, player);
 	SDL_RenderPresent(renderer);
-
 }
 void Game::clean()
 {
+	currentLevel->clean();
 	SDL_DestroyWindow(window);
 	SDL_DestroyRenderer(renderer);
 	SDL_Quit();
@@ -136,3 +145,9 @@ bool Game::running()
 	return isRunning;
 }
 
+void Game::initLevels()
+{
+	LevelFactory::getInstance().registerLevel("2020", []() { return new Level2020(); });
+	LevelFactory::getInstance().registerLevel("2021", []() { return new Level2021(); });
+	LevelFactory::getInstance().registerLevel("2121", []() { return new Level2121(); });
+}

@@ -76,6 +76,7 @@ public:
                 break;
             case SDLK_s:  // Bas
                 moveDown = false;
+
                 if (lastVerticalKey == SDLK_s)
                 {
                     lastVerticalKey = moveUp ? SDLK_z : SDLK_UNKNOWN;
@@ -127,6 +128,68 @@ public:
         else
         {
             sprite->Play("Idle");
+        }
+    }
+
+    void handleEvent(SDL_Event& event) override
+    {
+        if (event.type == SDL_KEYDOWN) {
+            switch (event.key.keysym.sym) {
+            case SDLK_z:
+                moveUp = true;
+                lastVerticalKey = SDLK_z;
+                break;
+            case SDLK_q:
+                moveLeft = true;
+                lastHorizontalKey = SDLK_q;
+                sprite->spriteFlip = SDL_FLIP_HORIZONTAL;
+                break;
+            case SDLK_d:
+                moveRight = true;
+                lastHorizontalKey = SDLK_d;
+                sprite->spriteFlip = SDL_FLIP_NONE;
+                break;
+            case SDLK_s:
+                moveDown = true;
+                lastVerticalKey = SDLK_s;
+                break;
+            default:
+                break;
+            }
+        }
+
+        if (event.type == SDL_KEYUP) {
+            switch (event.key.keysym.sym) {
+            case SDLK_z:
+                moveUp = false;
+                if (lastVerticalKey == SDLK_z) {
+                    lastVerticalKey = moveDown ? SDLK_s : SDLK_UNKNOWN;
+                }
+                break;
+            case SDLK_q:
+                moveLeft = false;
+                if (lastHorizontalKey == SDLK_q) {
+                    lastHorizontalKey = moveRight ? SDLK_d : SDLK_UNKNOWN;
+                }
+                break;
+            case SDLK_d:
+                moveRight = false;
+                if (lastHorizontalKey == SDLK_d) {
+                    lastHorizontalKey = moveLeft ? SDLK_q : SDLK_UNKNOWN;
+                }
+                break;
+            case SDLK_s:
+                moveDown = false;
+                if (lastVerticalKey == SDLK_s) {
+                    lastVerticalKey = moveUp ? SDLK_z : SDLK_UNKNOWN;
+                }
+                break;
+            case SDLK_ESCAPE:
+                Game::isRunning = false;
+                break;
+            default:
+                break;
+            }
         }
     }
 };

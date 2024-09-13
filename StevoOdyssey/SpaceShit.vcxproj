@@ -150,9 +150,14 @@
     <ClCompile Include="ECS.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Level2020.cpp" />
+    <ClCompile Include="Level2021.cpp" />
+    <ClCompile Include="Level2121.cpp" />
+    <ClCompile Include="LevelFactory.hpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="TextureManager.cpp" />
+    <ClCompile Include="Manage.cpp" />
     <ClCompile Include="Vector2D.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -164,12 +169,15 @@
     <ClInclude Include="Game.hpp" />
     <ClInclude Include="GameObject.hpp" />
     <ClInclude Include="KeyboardController.hpp" />
+    <ClInclude Include="Level.hpp" />
     <ClInclude Include="Map.hpp" />
     <ClInclude Include="TileComponent.hpp" />
     <ClInclude Include="TransformComponent.hpp" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SpriteComponent.hpp" />
     <ClInclude Include="TextureManager.hpp" />
+    <ClInclude Include="Manage.hpp" />
+    <ClInclude Include="Utils.hpp" />
     <ClInclude Include="Vector2D.hpp" />
   </ItemGroup>
   <ItemGroup>

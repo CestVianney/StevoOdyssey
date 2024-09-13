@@ -16,6 +16,9 @@
     <Filter Include="Fichiers sources\ECS">
       <UniqueIdentifier>{7f27b335-9f69-4f4a-bf2a-83f8897b784f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers sources\Level">
+      <UniqueIdentifier>{41bd75c8-36d2-47bd-89a8-358236340776}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -41,6 +44,21 @@
     </ClCompile>
     <ClCompile Include="ECS.cpp">
       <Filter>Fichiers sources\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="Manage.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Level2020.cpp">
+      <Filter>Fichiers sources\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelFactory.hpp">
+      <Filter>Fichiers sources\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="Level2021.cpp">
+      <Filter>Fichiers sources\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="Level2121.cpp">
+      <Filter>Fichiers sources\Level</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -88,6 +106,15 @@
     </ClInclude>
     <ClInclude Include="Animation.hpp">
       <Filter>Fichiers sources\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="Manage.hpp">
+      <Filter>Fichiers sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.hpp">
+      <Filter>Fichiers sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Level.hpp">
+      <Filter>Fichiers sources\Level</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
