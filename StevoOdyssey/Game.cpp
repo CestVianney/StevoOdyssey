@@ -66,6 +66,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 void Game::loadLevel(int x, int y, int exitOrigin)
 {
 	std::string levelNumber = std::to_string(x) + std::to_string(y);
+	TextureManager::ClearTextures();
 	if (currentLevel)
 	{
 		currentLevel->clean(manager);
@@ -152,6 +153,7 @@ void Game::render()
 	currentLevel->render(manager, player);
 	SDL_RenderPresent(renderer);
 }
+
 void Game::clean()
 {
 	currentLevel->clean(manager);
