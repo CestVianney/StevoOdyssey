@@ -7,9 +7,7 @@
 #include "Manage.hpp"
 #include "Level.hpp"
 #include "LevelFactory.hpp"
-#include "Level2020.cpp"
-#include "Level2021.cpp"
-#include "Level2121.cpp"
+#include "LevelLoader.hpp"
 #include <iostream>
 
 Map* map;
@@ -22,9 +20,6 @@ int currentLevelY = 20;
 
 int mapWidth = 800;
 int mapHeight = 640;
-
-bool skipCollisionCheck = false;
-int framesToSkip = 1;
 
 SDL_Rect Game::camera = { 0,0,mapWidth,mapHeight };
 
@@ -79,16 +74,16 @@ void Game::loadLevel(int x, int y, int exitOrigin)
 		switch (exitOrigin)
 		{
 		case 1: // Top
-			player->getComponent<TransformComponent>().position.y = mapHeight - 64;
+			player->getComponent<TransformComponent>().position.y = mapHeight - 48;
 			break;
 		case 2: // Right
-			player->getComponent<TransformComponent>().position.x = 0 + 32;
+			player->getComponent<TransformComponent>().position.x = 0 + 16;
 			break;
 		case 3: // Bottom
-			player->getComponent<TransformComponent>().position.y = 0 + 32;
+			player->getComponent<TransformComponent>().position.y = 0 + 16;
 			break;
 		case 4: // Left
-			player->getComponent<TransformComponent>().position.x = mapWidth - 64;
+			player->getComponent<TransformComponent>().position.x = mapWidth - 48;
 			break;
 		default:
 			break;
@@ -117,36 +112,30 @@ void Game::handleEvents()
 
 void Game::update()
 {
-	if (skipCollisionCheck) {
-		framesToSkip--;
-		if (framesToSkip <= 0) {
-			skipCollisionCheck = false; 
-		}
-	}
-	else {
-		bool rightMapchange = player->getComponent<TransformComponent>().position.x >= mapWidth - 32;
-		bool leftMapchange = player->getComponent<TransformComponent>().position.x <= 0;
-		bool topMapchange = player->getComponent<TransformComponent>().position.y <= 0;
-		bool bottomMapchange = player->getComponent<TransformComponent>().position.y >= mapHeight - 32;
+
+	bool rightMapchange = player->getComponent<TransformComponent>().position.x >= mapWidth - 32;
+	bool leftMapchange = player->getComponent<TransformComponent>().position.x <= 0;
+	bool topMapchange = player->getComponent<TransformComponent>().position.y <= 0;
+	bool bottomMapchange = player->getComponent<TransformComponent>().position.y >= mapHeight - 32;
 
 
-		if (rightMapchange) {
-			currentLevelX += 1;
-			loadLevel(currentLevelX, currentLevelY, 2);
-		}
-		else if (leftMapchange) {
-			currentLevelX -= 1;
-			loadLevel(currentLevelX, currentLevelY, 4);
-		}
-		else if (topMapchange) {
-			currentLevelY -= 1;
-			loadLevel(currentLevelX, currentLevelY, 1);
-		}
-		else if (bottomMapchange) {
-			currentLevelY += 1;
-			loadLevel(currentLevelX, currentLevelY, 3);
-		}
+	if (rightMapchange) {
+		currentLevelX += 1;
+		loadLevel(currentLevelX, currentLevelY, 2);
 	}
+	else if (leftMapchange) {
+		currentLevelX -= 1;
+		loadLevel(currentLevelX, currentLevelY, 4);
+	}
+	else if (topMapchange) {
+		currentLevelY -= 1;
+		loadLevel(currentLevelX, currentLevelY, 1);
+	}
+	else if (bottomMapchange) {
+		currentLevelY += 1;
+		loadLevel(currentLevelX, currentLevelY, 3);
+	}
+	
 
 	if (currentLevel != nullptr) {
 		manager.refresh();
@@ -177,8 +166,6 @@ bool Game::running()
 }
 
 void Game::initLevels()
-{
-	LevelFactory::getInstance().registerLevel("2020", []() { return new Level2020(); });
-	LevelFactory::getInstance().registerLevel("2021", []() { return new Level2021(); });
-	LevelFactory::getInstance().registerLevel("2121", []() { return new Level2121(); });
+{	
+	LevelLoader::initLevels();
 }
