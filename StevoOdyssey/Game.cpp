@@ -79,7 +79,7 @@ void Game::loadLevel(int x, int y, int exitOrigin)
 		switch (exitOrigin)
 		{
 		case 1: // Top
-			player->getComponent<TransformComponent>().position.y = mapHeight - 32;
+			player->getComponent<TransformComponent>().position.y = mapHeight - 64;
 			break;
 		case 2: // Right
 			player->getComponent<TransformComponent>().position.x = 0 + 32;
@@ -88,13 +88,13 @@ void Game::loadLevel(int x, int y, int exitOrigin)
 			player->getComponent<TransformComponent>().position.y = 0 + 32;
 			break;
 		case 4: // Left
-			player->getComponent<TransformComponent>().position.x = mapWidth - 32;
+			player->getComponent<TransformComponent>().position.x = mapWidth - 64;
 			break;
 		default:
 			break;
 		}
 	}
-
+	player->update();
 	currentLevel = LevelFactory::getInstance().createLevel(levelNumber);
 	currentLevel->init(manager, player);
 }
