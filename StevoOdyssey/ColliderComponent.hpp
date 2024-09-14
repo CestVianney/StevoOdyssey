@@ -28,6 +28,10 @@ public:
 		collider.h = collider.w = size;
 	}
 
+	~ColliderComponent()
+	{
+		clean();
+	}
 
 	void init() override
 	{
@@ -63,6 +67,14 @@ public:
 		TextureManager::Draw(tex, srcR, destR, SDL_FLIP_NONE);
 	}
 
+	void clean()
+	{
+		if (tex)
+		{
+			SDL_DestroyTexture(tex);
+			tex = nullptr;
+		}
+	}
 private:
 
 };

@@ -15,7 +15,7 @@ public:
 
 	void init(const char* title, int xpos, int ypos, int width, int height, bool fullscreen);
 
-	void loadLevel(int x, int y);
+	void loadLevel(int x, int y, int exitOrigin);
 
 	void handleEvents();
 	void update();

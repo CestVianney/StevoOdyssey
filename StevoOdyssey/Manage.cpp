@@ -26,6 +26,27 @@ void Manage::manageCollisions(Manager& manager, Entity* player, SDL_Rect playerC
 			player->getComponent<TransformComponent>().position.x = cCol.x + cCol.w;
 		}
 	}
+
+	for (auto& c : manager.getGroup(Game::groupPlayers))
+	{
+		TransformComponent& cPos = c->getComponent<TransformComponent>();
+		if (cPos.position.x < 0)
+		{
+			cPos.position.x = 0;
+		}
+		else if (cPos.position.x + cPos.width > 800)
+		{
+			cPos.position.x = 800 - cPos.width;
+		}
+		if (cPos.position.y < 0)
+		{
+			cPos.position.y = 0;
+		}
+		else if (cPos.position.y + cPos.height > 640)
+		{
+			cPos.position.y = 640 - cPos.height;
+		}
+	}
 }
 
 void Manage::manageInteractions(Manager& manager, Entity* player, SDL_Rect playerCol) {
@@ -71,20 +92,36 @@ void Manage::manageRendering(Manager& manager) {
 	}
 }
 
-void Manage::initPlayer(Manager& manager, Entity*& player, int x, int y) {
-	auto& newPlayer = manager.addEntity();
-	newPlayer.addComponent<TransformComponent>(x, y);
-	newPlayer.addComponent<SpriteComponent>("resources/characters/stevo.png", true);
-	newPlayer.addComponent<KeyboardController>();
-	newPlayer.addComponent<ColliderComponent>("player");
-	newPlayer.addGroup(Game::groupPlayers);
-	player = &newPlayer;
-}
-
 void Manage::initNpc(Manager& manager, int x, int y) {
 	auto& npc(manager.addEntity());
 	npc.addComponent<TransformComponent>(x, y);
 	npc.addComponent<SpriteComponent>("resources/characters/lino.png");
 	npc.addComponent<ColliderComponent>("npc");
 	npc.addGroup(Game::groupNpcs);
+}
+
+void Manage::cleanGroups(Manager& manager) {
+	auto& colliders = manager.getGroup(Game::groupColliders);
+	for (auto& entity : colliders) {
+		entity->destroy(); 
+	}
+	colliders.clear();
+
+	auto& map = manager.getGroup(Game::groupMap);
+	for (auto& entity : map) {
+		entity->destroy();
+	}
+	map.clear();
+
+	auto& enemies = manager.getGroup(Game::groupEnemies);
+	for (auto& entity : enemies) {
+		entity->destroy();
+	}
+	enemies.clear();
+
+	auto& npcs = manager.getGroup(Game::groupNpcs);
+	for (auto& entity : npcs) {
+		entity->destroy();
+	}
+	npcs.clear();
 }

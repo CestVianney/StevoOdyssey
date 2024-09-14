@@ -23,6 +23,9 @@ int currentLevelY = 20;
 int mapWidth = 800;
 int mapHeight = 640;
 
+bool skipCollisionCheck = false;
+int framesToSkip = 1;
+
 SDL_Rect Game::camera = { 0,0,mapWidth,mapHeight };
 
 bool Game::isRunning = false;
@@ -62,21 +65,37 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	player->addComponent<ColliderComponent>("player");
 	player->addGroup(Game::groupPlayers);
 
-	loadLevel(20, 20);
+	loadLevel(20, 20, 9);
 }
 
-void Game::loadLevel(int x, int y)
+void Game::loadLevel(int x, int y, int exitOrigin)
 {
 	std::string levelNumber = std::to_string(x) + std::to_string(y);
 	if (currentLevel)
 	{
-		currentLevel->clean();
+		currentLevel->clean(manager);
 		delete currentLevel;
 		currentLevel = nullptr;
+		switch (exitOrigin)
+		{
+		case 1: // Top
+			player->getComponent<TransformComponent>().position.y = mapHeight - 32;
+			break;
+		case 2: // Right
+			player->getComponent<TransformComponent>().position.x = 0 + 32;
+			break;
+		case 3: // Bottom
+			player->getComponent<TransformComponent>().position.y = 0 + 32;
+			break;
+		case 4: // Left
+			player->getComponent<TransformComponent>().position.x = mapWidth - 32;
+			break;
+		default:
+			break;
+		}
 	}
 
 	currentLevel = LevelFactory::getInstance().createLevel(levelNumber);
-	std::cout << "Loading level " << levelNumber << std::endl;
 	currentLevel->init(manager, player);
 }
 
@@ -96,31 +115,43 @@ void Game::handleEvents()
 }
 
 
-void Game::update() 
+void Game::update()
 {
+	if (skipCollisionCheck) {
+		framesToSkip--;
+		if (framesToSkip <= 0) {
+			skipCollisionCheck = false; 
+		}
+	}
+	else {
+		bool rightMapchange = player->getComponent<TransformComponent>().position.x >= mapWidth - 32;
+		bool leftMapchange = player->getComponent<TransformComponent>().position.x <= 0;
+		bool topMapchange = player->getComponent<TransformComponent>().position.y <= 0;
+		bool bottomMapchange = player->getComponent<TransformComponent>().position.y >= mapHeight - 32;
+
+
+		if (rightMapchange) {
+			currentLevelX += 1;
+			loadLevel(currentLevelX, currentLevelY, 2);
+		}
+		else if (leftMapchange) {
+			currentLevelX -= 1;
+			loadLevel(currentLevelX, currentLevelY, 4);
+		}
+		else if (topMapchange) {
+			currentLevelY -= 1;
+			loadLevel(currentLevelX, currentLevelY, 1);
+		}
+		else if (bottomMapchange) {
+			currentLevelY += 1;
+			loadLevel(currentLevelX, currentLevelY, 3);
+		}
+	}
+
 	if (currentLevel != nullptr) {
 		manager.refresh();
 		currentLevel->update(manager, player);
 		manager.update();
-	}
-	else {
-		std::cerr << "currentLevel is null" << std::endl;
-	}
-	if (player->getComponent<TransformComponent>().position.x >= mapWidth) {
-		currentLevelX += 1;
-		loadLevel(currentLevelX, currentLevelY);
-	}
-	else if (player->getComponent<TransformComponent>().position.x <= 0) {
-		currentLevelX -= 1;
-		loadLevel(currentLevelX, currentLevelY);
-	}
-	else if (player->getComponent<TransformComponent>().position.y <= 0) {
-		currentLevelY -= 1;
-		loadLevel(currentLevelX, currentLevelY);
-	}
-	else if (player->getComponent<TransformComponent>().position.y >= mapHeight) {
-		currentLevelY += 1;
-		loadLevel(currentLevelX, currentLevelY);
 	}
 }
 
@@ -134,7 +165,7 @@ void Game::render()
 }
 void Game::clean()
 {
-	currentLevel->clean();
+	currentLevel->clean(manager);
 	SDL_DestroyWindow(window);
 	SDL_DestroyRenderer(renderer);
 	SDL_Quit();
