@@ -60,6 +60,36 @@
     <ClCompile Include="Level2121.cpp">
       <Filter>Fichiers sources\Level</Filter>
     </ClCompile>
+    <ClCompile Include="LevelLoader.hpp">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClCompile>
+    <ClCompile Include="Level1010.cpp">
+      <Filter>Fichiers sources\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="Level1011.cpp">
+      <Filter>Fichiers sources\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="Level1012.cpp">
+      <Filter>Fichiers sources\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="Level1110.cpp">
+      <Filter>Fichiers sources\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="Level1111.cpp">
+      <Filter>Fichiers sources\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="Level1112.cpp">
+      <Filter>Fichiers sources\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="Level1210.cpp">
+      <Filter>Fichiers sources\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="Level1211.cpp">
+      <Filter>Fichiers sources\Level</Filter>
+    </ClCompile>
+    <ClCompile Include="Level1212.cpp">
+      <Filter>Fichiers sources\Level</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.hpp">
@@ -115,6 +145,15 @@
     </ClInclude>
     <ClInclude Include="Level.hpp">
       <Filter>Fichiers sources\Level</Filter>
+    </ClInclude>
+    <ClInclude Include="PlantsComponent.hpp">
+      <Filter>Fichiers sources\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="PropsComponent.hpp">
+      <Filter>Fichiers sources\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="WallsComponent.hpp">
+      <Filter>Fichiers sources\ECS</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

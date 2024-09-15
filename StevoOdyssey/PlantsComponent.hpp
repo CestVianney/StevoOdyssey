@@ -3,7 +3,7 @@
 #include "ECS.hpp"
 #include "SDL.h"
 
-class TileComponent : public Component
+class PlantsComponent : public Component
 {
 public:
 
@@ -11,16 +11,16 @@ public:
 	SDL_Rect srcRect, destRect;
 	Vector2D position;
 
-	TileComponent() = default;
+	PlantsComponent() = default;
 
-	~TileComponent()
+	~PlantsComponent()
 	{
 		SDL_DestroyTexture(texture);
 	}
 
-	TileComponent(int srcX, int srcY, int xpos, int ypos, int tsize, int tscale)
+	PlantsComponent(int srcX, int srcY, int xpos, int ypos, int tsize, int tscale)
 	{
-		texture = TextureManager::LoadTexture("resources/tiles/ground.png");
+		texture = TextureManager::LoadTexture("resources/tiles/plantTiles.png");
 
 		position.x = xpos;
 		position.y = ypos;

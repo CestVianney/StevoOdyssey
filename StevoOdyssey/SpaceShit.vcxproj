@@ -146,10 +146,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Level1110.cpp" />
+    <ClCompile Include="Level1111.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="ECS.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Level1010.cpp" />
+    <ClCompile Include="Level1011.cpp" />
+    <ClCompile Include="Level1012.cpp" />
+    <ClCompile Include="Level1112.cpp" />
+    <ClCompile Include="Level1210.cpp" />
+    <ClCompile Include="Level1211.cpp" />
+    <ClCompile Include="Level1212.cpp" />
     <ClCompile Include="Level2020.cpp" />
     <ClCompile Include="Level2021.cpp" />
     <ClCompile Include="Level2121.cpp" />
@@ -172,6 +181,8 @@
     <ClInclude Include="KeyboardController.hpp" />
     <ClInclude Include="Level.hpp" />
     <ClInclude Include="Map.hpp" />
+    <ClInclude Include="PlantsComponent.hpp" />
+    <ClInclude Include="PropsComponent.hpp" />
     <ClInclude Include="TileComponent.hpp" />
     <ClInclude Include="TransformComponent.hpp" />
     <ClInclude Include="resource.h" />
@@ -180,6 +191,7 @@
     <ClInclude Include="Manage.hpp" />
     <ClInclude Include="Utils.hpp" />
     <ClInclude Include="Vector2D.hpp" />
+    <ClInclude Include="WallsComponent.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SpaceShit.rc" />

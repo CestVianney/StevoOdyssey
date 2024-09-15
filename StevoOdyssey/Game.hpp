@@ -37,6 +37,9 @@ public:
 		groupPlayers,
 		groupEnemies,
 		groupNpcs,
+		groupWalls,
+		groupProps,
+		groupPlants,
 		groupColliders
 	};
 

@@ -15,8 +15,8 @@ Manager Game::manager;
 Level* currentLevel = nullptr;
 SDL_Renderer* Game::renderer = nullptr;
 SDL_Event Game::event;
-int currentLevelX = 20;
-int currentLevelY = 20;
+int currentLevelX = 11;
+int currentLevelY = 12;
 
 int mapWidth = 800;
 int mapHeight = 640;
@@ -54,13 +54,13 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	initLevels();
 
 	player = &manager.addEntity();
-	player->addComponent<TransformComponent>(500, 550, 32, 32, 1);
+	player->addComponent<TransformComponent>(500, 350, 32, 32, 1);
 	player->addComponent<SpriteComponent>("resources/characters/stevo.png", true);
 	player->addComponent<KeyboardController>();
 	player->addComponent<ColliderComponent>("player");
 	player->addGroup(Game::groupPlayers);
 
-	loadLevel(20, 20, 9);
+	loadLevel(currentLevelX, currentLevelY, 9);
 }
 
 void Game::loadLevel(int x, int y, int exitOrigin)

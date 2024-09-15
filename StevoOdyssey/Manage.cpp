@@ -71,12 +71,27 @@ void Manage::drawArea(Entity& entity, int radius) {
 
 void Manage::manageRendering(Manager& manager) {
 	auto& tiles = manager.getGroup(Game::groupMap);
+	auto& walls = manager.getGroup(Game::groupWalls);
+	auto& props = manager.getGroup(Game::groupProps);
+	auto& plants = manager.getGroup(Game::groupPlants);
 	auto& players = manager.getGroup(Game::groupPlayers);
 	auto& enemiesGroup = manager.getGroup(Game::groupEnemies);
 	auto& npcs = manager.getGroup(Game::groupNpcs);
 	for (auto& t : tiles)
 	{
 		t->draw();
+	}
+	for (auto& wa : walls)
+	{
+		wa->draw();
+	}
+	for (auto& pr : props)
+	{
+		pr->draw();
+	}
+	for (auto& pl : plants)
+	{
+		pl->draw();
 	}
 	for (auto& p : players)
 	{
@@ -112,6 +127,24 @@ void Manage::cleanGroups(Manager& manager) {
 		entity->destroy();
 	}
 	map.clear();
+
+	auto& walls = manager.getGroup(Game::groupWalls);
+	for (auto& entity : walls) {
+		entity->destroy();
+	}
+	walls.clear();
+
+	auto& props = manager.getGroup(Game::groupProps);
+	for (auto& entity : props) {
+		entity->destroy();
+	}
+	props.clear();
+
+	auto& plants = manager.getGroup(Game::groupPlants);
+	for (auto& entity : plants) {
+		entity->destroy();
+	}
+	plants.clear();
 
 	auto& enemies = manager.getGroup(Game::groupEnemies);
 	for (auto& entity : enemies) {
