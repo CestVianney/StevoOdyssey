@@ -3,10 +3,16 @@
 #include <iostream>
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_opengl.h>
 #include "ECS.hpp"
 #include <vector>
 
 class ColliderComponent;
+
+enum GameState {
+	STATE_GAME,
+	STATE_MENU
+};
 
 class Game {
 public:
@@ -24,6 +30,9 @@ public:
 	bool running();
 	
 	void initLevels();
+
+	void renderGame();
+	void renderMenu();
 
 	static Manager manager;
 	static SDL_Renderer *renderer; 
@@ -47,4 +56,6 @@ private:
 	int cnt = 0;
 	SDL_Window* window; 
 	Entity* player;
+
+	GameState currentState;
 };

@@ -25,7 +25,7 @@ SDL_Rect Game::camera = { 0,0,mapWidth,mapHeight };
 
 bool Game::isRunning = false;
 
-Game::Game()
+Game::Game() : currentState(STATE_GAME)
 {}
 Game::~Game()
 {
@@ -37,11 +37,13 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	int flags = 0;
 	if (fullscreen)
 	{
-		flags = SDL_WINDOW_FULLSCREEN;
+		flags = SDL_WINDOW_OPENGL;
 	}
 	if (SDL_Init(SDL_INIT_EVERYTHING) == 0)
 	{
 		window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, flags);
+		SDL_GLContext glcontext = SDL_GL_CreateContext(window);
+		SDL_GL_MakeCurrent(window, glcontext);
 		renderer = SDL_CreateRenderer(window, -1, 0);
 		if (renderer)
 		{
@@ -103,6 +105,13 @@ void Game::handleEvents()
 		case SDL_QUIT:
 			Game::isRunning = false;
 			break;
+		case SDL_KEYDOWN:
+			if (event.key.keysym.sym == SDLK_p) {
+				if (currentState == STATE_GAME)
+					currentState = STATE_MENU;
+				else if (currentState == STATE_MENU)
+					currentState = STATE_GAME;
+			}
 		default:
 			manager.handleEvent(event);  
 			break;
@@ -113,44 +122,67 @@ void Game::handleEvents()
 
 void Game::update()
 {
+	if (currentState == STATE_GAME) {
+		bool rightMapchange = player->getComponent<TransformComponent>().position.x >= mapWidth - 32;
+		bool leftMapchange = player->getComponent<TransformComponent>().position.x <= 0;
+		bool topMapchange = player->getComponent<TransformComponent>().position.y <= 0;
+		bool bottomMapchange = player->getComponent<TransformComponent>().position.y >= mapHeight - 32;
 
-	bool rightMapchange = player->getComponent<TransformComponent>().position.x >= mapWidth - 32;
-	bool leftMapchange = player->getComponent<TransformComponent>().position.x <= 0;
-	bool topMapchange = player->getComponent<TransformComponent>().position.y <= 0;
-	bool bottomMapchange = player->getComponent<TransformComponent>().position.y >= mapHeight - 32;
+
+		if (rightMapchange) {
+			currentLevelX += 1;
+			loadLevel(currentLevelX, currentLevelY, 2);
+		}
+		else if (leftMapchange) {
+			currentLevelX -= 1;
+			loadLevel(currentLevelX, currentLevelY, 4);
+		}
+		else if (topMapchange) {
+			currentLevelY -= 1;
+			loadLevel(currentLevelX, currentLevelY, 1);
+		}
+		else if (bottomMapchange) {
+			currentLevelY += 1;
+			loadLevel(currentLevelX, currentLevelY, 3);
+		}
 
 
-	if (rightMapchange) {
-		currentLevelX += 1;
-		loadLevel(currentLevelX, currentLevelY, 2);
-	}
-	else if (leftMapchange) {
-		currentLevelX -= 1;
-		loadLevel(currentLevelX, currentLevelY, 4);
-	}
-	else if (topMapchange) {
-		currentLevelY -= 1;
-		loadLevel(currentLevelX, currentLevelY, 1);
-	}
-	else if (bottomMapchange) {
-		currentLevelY += 1;
-		loadLevel(currentLevelX, currentLevelY, 3);
-	}
-	
-
-	if (currentLevel != nullptr) {
-		manager.refresh();
-		currentLevel->update(manager, player);
-		manager.update();
+		if (currentLevel != nullptr) {
+			manager.refresh();
+			currentLevel->update(manager, player);
+			manager.update();
+		}
 	}
 }
 
 
 void Game::render() 
 {
+	switch (currentState)
+	{
+	case STATE_GAME:
+		renderGame();
+		break;
+	case STATE_MENU:
+		renderMenu();
+		break;
+	default:
+		break;
+	}
 
+}
+
+void Game::renderGame()
+{
 	SDL_RenderClear(renderer);
 	currentLevel->render(manager, player);
+	SDL_RenderPresent(renderer);
+}
+
+void Game::renderMenu()
+{
+	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);  
+	SDL_RenderClear(renderer);
 	SDL_RenderPresent(renderer);
 }
 
