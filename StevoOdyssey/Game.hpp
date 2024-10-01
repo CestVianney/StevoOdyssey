@@ -5,6 +5,7 @@
 #include <SDL_image.h>
 #include <SDL_opengl.h>
 #include "ECS.hpp"
+#include "SDL_ttf.h"
 #include <vector>
 
 class ColliderComponent;
@@ -56,6 +57,7 @@ private:
 	int cnt = 0;
 	SDL_Window* window; 
 	Entity* player;
-
 	GameState currentState;
+	TTF_Font* font;
+	SDL_Texture* renderText(const char* message, SDL_Color color);
 };

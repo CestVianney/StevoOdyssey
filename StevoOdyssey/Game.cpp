@@ -39,7 +39,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	{
 		flags = SDL_WINDOW_OPENGL;
 	}
-	if (SDL_Init(SDL_INIT_EVERYTHING) == 0)
+	if (SDL_Init(SDL_INIT_EVERYTHING) == 0 && TTF_Init() == 0)
 	{
 		window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, flags);
 		SDL_GLContext glcontext = SDL_GL_CreateContext(window);
@@ -49,6 +49,10 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 		{
 			SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 		}
+
+		font = TTF_OpenFont("resources/fonts/cour.ttf", 18);
+		if (!font)
+			std::cout << "Failed to load font" << std::endl;	
 
 		isRunning = true;
 	} 
@@ -63,6 +67,14 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 	player->addGroup(Game::groupPlayers);
 
 	loadLevel(currentLevelX, currentLevelY, 9);
+}
+
+SDL_Texture* Game::renderText(const char* message, SDL_Color color)
+{
+	SDL_Surface* surf = TTF_RenderText_Solid(font, message, color);
+	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surf);
+	SDL_FreeSurface(surf);
+	return texture;
 }
 
 void Game::loadLevel(int x, int y, int exitOrigin)
@@ -181,16 +193,29 @@ void Game::renderGame()
 
 void Game::renderMenu()
 {
-	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);  
-	SDL_RenderClear(renderer);
-	SDL_RenderPresent(renderer);
+	SDL_Color white = { 255, 255, 255, 255 };
+
+	SDL_Texture* resumeTexture = renderText("Reprendre (Appuyez sur P)", white);
+	SDL_Rect resumeRect = { 200, 200, 400, 50 };  
+	SDL_RenderCopy(renderer, resumeTexture, NULL, &resumeRect);
+	SDL_DestroyTexture(resumeTexture);  
+
+	// Afficher l'option "Quitter"
+	SDL_Texture* quitTexture = renderText("Quitter (Appuyez sur Q)", white);
+	SDL_Rect quitRect = { 200, 300, 400, 50 };  
+	SDL_RenderCopy(renderer, quitTexture, NULL, &quitRect);
+	SDL_DestroyTexture(quitTexture);
+
+	SDL_RenderPresent(renderer);  
 }
 
 void Game::clean()
 {
 	currentLevel->clean(manager);
+	TTF_CloseFont(font);
 	SDL_DestroyWindow(window);
 	SDL_DestroyRenderer(renderer);
+	TTF_Quit();
 	SDL_Quit();
 }
 
